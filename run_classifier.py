@@ -374,6 +374,41 @@ class ColaProcessor(DataProcessor):
     return examples
 
 
+class NewsProcessor(DataProcessor):
+    """Processor for the MRPC data set (GLUE version)."""
+
+    def __init__(self):
+        self.labels = set()
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        # logger.info("LOOKING AT {}".format(os.path.join(data_dir, "train.tsv")))
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+    def get_labels(self):
+        """See base class."""
+        # return list(self.labels)
+        return ["game", "fashion", "houseliving"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(line[1])
+            label = tokenization.convert_to_unicode(line[0])
+            # self.labels.add(label)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+
+        return examples
+
 def convert_single_example(ex_index, example, label_list, max_seq_length,
                            tokenizer):
   """Converts a single `InputExample` into a single `InputFeatures`."""
@@ -605,8 +640,8 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
 
     logits = tf.matmul(output_layer, output_weights, transpose_b=True)
     logits = tf.nn.bias_add(logits, output_bias)
-    probabilities = tf.nn.softmax(logits, axis=-1)
     log_probs = tf.nn.log_softmax(logits, axis=-1)
+    probabilities = tf.nn.softmax(logits, axis=-1)
 
     one_hot_labels = tf.one_hot(labels, depth=num_labels, dtype=tf.float32)
 
@@ -788,6 +823,7 @@ def main(_):
       "mnli": MnliProcessor,
       "mrpc": MrpcProcessor,
       "xnli": XnliProcessor,
+      "news": NewsProcessor
   }
 
   tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
