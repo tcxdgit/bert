@@ -22,6 +22,7 @@ import os
 import modeling
 import optimization
 import tensorflow as tf
+import time
 
 flags = tf.flags
 
@@ -404,6 +405,7 @@ def _decode_record(record, name_to_features):
 
 
 def main(_):
+  tic = time.time()
   tf.logging.set_verbosity(tf.logging.INFO)
 
   if not FLAGS.do_train and not FLAGS.do_eval:
@@ -479,11 +481,16 @@ def main(_):
         input_fn=eval_input_fn, steps=FLAGS.max_eval_steps)
 
     output_eval_file = os.path.join(FLAGS.output_dir, "eval_results.txt")
+    toc = time.time()
+    time_cost = float(toc) - tic
     with tf.gfile.GFile(output_eval_file, "w") as writer:
       tf.logging.info("***** Eval results *****")
       for key in sorted(result.keys()):
         tf.logging.info("  %s = %s", key, str(result[key]))
         writer.write("%s = %s\n" % (key, str(result[key])))
+
+      tf.logging.info("time_cost = %s s", str(time_cost))
+      writer.write("time_cost = %s s\n" % (str(time_cost)))
 
 
 if __name__ == "__main__":
