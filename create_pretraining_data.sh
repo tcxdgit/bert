@@ -1,0 +1,1 @@
+python create_pretraining_data.py --input_file=./sample_cn.txt --output_file=./output_example_cn/tf_examples.tfrecord --vocab_file=./chinese_L-12_H-768_A-12/vocab.txt --do_lower_case=True --max_seq_length=300 --max_predictions_per_seq=45 --masked_lm_prob=0.15 --random_seed=12345 --dupe_factor=5
