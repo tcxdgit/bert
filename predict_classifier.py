@@ -1099,5 +1099,5 @@ def predict(source="", target=""):
 
 if __name__ == "__main__":
     os.system("export CUDA_VISIBLE_DEVICES=0")
-    probability = predict(source="你好", target="Get out!")
+    probability = predict(source="今天天气很不错。", target="Today is a good day you know, and I get up early.")
     print("probability of class 1:{}".format(probability))

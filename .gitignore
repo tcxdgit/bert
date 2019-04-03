@@ -114,3 +114,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+.idea/
+dataset/
+multi_cased_L-12_H-768_A-12/
+
